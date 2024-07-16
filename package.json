@@ -1,0 +1,15 @@
+{
+  "name": "to-do-list-api",
+  "version": "1.0.0",
+  "description": "A simple API for managing to-do tasks with user authentication, built using Node.js, Fastify, and MongoDB. This project provides functionality for creating, reading, updating, and deleting tasks with JWT-based authentication.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "fastify": "^4.28.1"
+  }
+}
