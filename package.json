@@ -4,6 +4,7 @@
   "description": "A simple API for managing to-do tasks with user authentication, built using Node.js, Fastify, and MongoDB. This project provides functionality for creating, reading, updating, and deleting tasks with JWT-based authentication.",
   "main": "index.js",
   "scripts": {
+    "start": "node src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -12,6 +13,7 @@
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "fastify": "^4.28.1",
+    "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.5.1"
   }
 }
