@@ -1,12 +1,14 @@
 const taskController = require('../controllers/taskController');
+const authMiddleware = require('../controllers/authMiddleware');
 
 async function routes(fastify, options) {
-  fastify.addHook('preHandler', taskController.authenticate);
-
-  fastify.post('/tasks', taskController.createTask);
-  fastify.get('/tasks', taskController.getTasks);
-  fastify.put('/tasks/:id', taskController.updateTask);
-  fastify.delete('/tasks/:id', taskController.deleteTask);
+  fastify.addHook('preHandler', authMiddleware.authenticate);
+  
+  fastify.post('/', taskController.createTask);
+  fastify.get('/', taskController.getTasks);
+  fastify.get('/:id', taskController.getTaskById);  // Add this route
+  fastify.put('/:id', taskController.updateTask);
+  fastify.delete('/:id', taskController.deleteTask);
 }
 
 module.exports = routes;

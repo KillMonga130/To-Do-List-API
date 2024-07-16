@@ -1,60 +1,47 @@
 const Task = require('../models/task');
-const jwt = require('jsonwebtoken');
-require('dotenv').config();
 
-const authenticate = async (request, reply, done) => {
-  const token = request.headers['authorization']?.split(' ')[1];
-  if (!token) return reply.code(401).send({ error: 'Token required' });
-
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    request.user = decoded;
-    done();
-  } catch (error) {
-    reply.code(401).send({ error: 'Invalid token' });
-  }
+exports.createTask = async (req, reply) => {
+  const { title, completed } = req.body;
+  const task = new Task({ title, completed });
+  await task.save();
+  reply.code(201).send(task);
 };
 
-exports.createTask = async (request, reply) => {
-  const { title, description, status } = request.body;
-  try {
-    const task = new Task({ title, description, status, user: request.user.id });
-    await task.save();
-    reply.code(201).send(task);
-  } catch (error) {
-    reply.code(400).send({ error: error.message });
-  }
+exports.getTasks = async (req, reply) => {
+  const tasks = await Task.find();
+  reply.send(tasks);
 };
 
-exports.getTasks = async (request, reply) => {
-  const { status } = request.query;
-  try {
-    const tasks = await Task.find({ user: request.user.id, ...(status && { status }) });
-    reply.send(tasks);
-  } catch (error) {
-    reply.code(400).send({ error: error.message });
+exports.getTaskById = async (req, reply) => {
+  const { id } = req.params;
+  const task = await Task.findById(id);
+  
+  if (!task) {
+    return reply.code(404).send({ message: 'Task not found' });
   }
+  
+  reply.send(task);
 };
 
-exports.updateTask = async (request, reply) => {
-  const { id } = request.params;
-  const updates = request.body;
-  try {
-    const task = await Task.findOneAndUpdate({ _id: id, user: request.user.id }, updates, { new: true });
-    if (!task) throw new Error('Task not found');
-    reply.send(task);
-  } catch (error) {
-    reply.code(400).send({ error: error.message });
+exports.updateTask = async (req, reply) => {
+  const { id } = req.params;
+  const { title, completed } = req.body;
+  const task = await Task.findByIdAndUpdate(id, { title, completed }, { new: true });
+  
+  if (!task) {
+    return reply.code(404).send({ message: 'Task not found' });
   }
+  
+  reply.send(task);
 };
 
-exports.deleteTask = async (request, reply) => {
-  const { id } = request.params;
-  try {
-    const task = await Task.findOneAndDelete({ _id: id, user: request.user.id });
-    if (!task) throw new Error('Task not found');
-    reply.send({ message: 'Task deleted successfully' });
-  } catch (error) {
-    reply.code(400).send({ error: error.message });
+exports.deleteTask = async (req, reply) => {
+  const { id } = req.params;
+  const task = await Task.findByIdAndDelete(id);
+  
+  if (!task) {
+    return reply.code(404).send({ message: 'Task not found' });
   }
+  
+  reply.send({ message: 'Task deleted successfully' });
 };
